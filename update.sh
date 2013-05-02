@@ -20,8 +20,10 @@ OSXDATE="YES"
 # then restart mysqld
 #      /etc/init.d/mysqld restart
 REQUIRES_LOCAL_INFILE="NO"
-
-# ensure that mysql is in this PATH
+# assumes Autoingestion.java is in the same directory as this script;
+# if different, change this
+AUTOINGESTION_LOCATION="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# ensure that the mysql binary is in this PATH
 export PATH=/bin:/usr/bin:/usr/local/bin
 
 cd $(dirname $0)
@@ -36,7 +38,7 @@ else
 		DATE=$(date -d "1 day ago" +%Y%m%d)
 	fi
 fi
-java Autoingestion $APPLELOGIN $APPLEPASSWORD $APPLEVENDORID Sales Daily Summary $DATE
+cd "$AUTOINGESTION_LOCATION" && java Autoingestion $APPLELOGIN $APPLEPASSWORD $APPLEVENDORID Sales Daily Summary $DATE
 FNAME="S_D_${APPLEVENDORID}_${DATE}.txt"
 if [ -f "$FNAME.gz" ]; then
 	gunzip "$FNAME.gz"
