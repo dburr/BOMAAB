@@ -20,9 +20,6 @@ OSXDATE="YES"
 # then restart mysqld
 #      /etc/init.d/mysqld restart
 REQUIRES_LOCAL_INFILE="NO"
-# assumes Autoingestion.java is in the same directory as this script;
-# if different, change this
-AUTOINGESTION_LOCATION="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # Sometimes ITC update availability is delayed, with the result being that
 # at the time this script is run by cron, the updates for that day are not
 # yet available.  Enable this option to periodically retry downloading the
@@ -50,7 +47,6 @@ else
 		DATE=$(date -d "1 day ago" +%Y%m%d)
 	fi
 fi
-#cd "$AUTOINGESTION_LOCATION" && java Autoingestion $APPLELOGIN $APPLEPASSWORD $APPLEVENDORID Sales Daily Summary $DATE
 java Autoingestion $APPLELOGIN $APPLEPASSWORD $APPLEVENDORID Sales Daily Summary $DATE
 FNAME="S_D_${APPLEVENDORID}_${DATE}.txt"
 if [ -f "$FNAME.gz" ]; then
