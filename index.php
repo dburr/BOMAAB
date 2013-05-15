@@ -22,7 +22,7 @@ foreach ($productList as $product) {
 	$blockValid = false;
 	$block['title'] = (strlen($product) > 20 ? substr($product, 0, 20).'...' : $product);
 	$block['datapoints'] = array();
-	for ($off=-30; $off < -1; $off++) {	// last 30 days until yesterday
+  for ($off=-30; $off < 0; $off++) {	// last 30 days until yesterday
 		$date = date('Y-m-d', mktime(0, 0, 0, date("m"), date("d")+$off, date("Y")));
 		if ($db->query ("select sum(units) as cc from sales where Title='{PROD}' and ProductTypeIdentifier in ".$action['productTypes']." and BeginDate='{DATE}' and EndDate='{DATE}'", array('PROD' => $product, 'DATE' => $date)) &&
 			$db->d["cc"] > 0) {
