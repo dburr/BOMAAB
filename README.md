@@ -138,6 +138,17 @@ Because download numbers are default, you can shorten the link like this:
 
 	http://your-server.com/path-to-folder/
 
+# 3. (Optional) PHP web server based graphs
+
+In the `php-graphs` directory you will find some sample PHP scripts
+that generate the IAP graphs as a web page, great for when you want to
+look at your graphs from outside of Status Board.  Simply install these
+files onto a web server with PHP enabled, and install the 
+[JpGraph](http://jpgraph.net/) library.  Edit `graph.php` and
+set `base_url` to the URL to where you have installed the BOMAAB
+php script.  Also change the `require_once` directives to point to
+where you installed the JpGraph library.
+
 # Notes
 
 - you can add htaccess/htpasswd or any other security measures to your graph script folder
