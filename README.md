@@ -141,7 +141,7 @@ Because download numbers are default, you can shorten the link like this:
 # 3. (Optional) PHP web server based graphs
 
 In the `php-graphs` directory you will find some sample PHP scripts
-that generate the IAP graphs as a web page, great for when you want to
+that generate the sales and IAP graphs as a web page, great for when you want to
 look at your graphs from outside of Status Board.  Simply install these
 files onto a web server with PHP enabled, and install the 
 [JpGraph](http://jpgraph.net/) library.  Edit `graph.php` and
