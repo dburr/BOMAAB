@@ -11,6 +11,7 @@ This guide will describe a setup for self-hosted, always-updated download/IAP st
 
 - copy <tt>update.sh</tt>, <tt>index.php</tt> and <tt>db.php</tt> to a folder of your web server
 - download and decompress [Autoingestion](http://apple.com/itunesnews/docs/Autoingestion.class.zip) to that folder
+- create file `Autoingestion.properties` with your iTC login and password info
 - create the MySQL table described under "MySQL setup"
 - open <tt>update.sh</tt> and enter your credentials in the header, enter them again in <tt>db.php</tt>  (note: if you don't wish to use your normal iTunes Connect user/password, you can create a "sales-only" sub-user with a different password)
 - run update.sh manually and check if everything runs fine; create a crontab entry for regular updates
@@ -29,7 +30,7 @@ MacMini with OS-X Server and DynDNS is running fine for me even on a DSL connect
 In the [APP Store Reporting Instructions](http://www.apple.com/itunesnews/docs/AppStoreReportingInstructions.pdf) Apple provides the link to the Autoingestion class. This Java class will be used to download the daily reports, which are initially stored as a CSV file and imported later into a MySQL database.
 
 Autoingestion.class now requires that the iTunes Connect username and password
-be placed in a properties file.  Create a file "Autoingestion.properties" with
+be placed in a properties file.  Create a file `Autoingestion.properties` with
 the following contents:
 
 ```
