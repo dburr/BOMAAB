@@ -1,0 +1,17 @@
+<html>
+  <head>
+    <title>BOMAAB Graphs</title>
+    <script>
+      function timedRefresh(timeoutPeriod) {
+            setTimeout("location.reload(true);",timeoutPeriod);
+      }
+    </script>
+  </head>
+  <body onload="JavaScript:timedRefresh(60000);">
+    <div align="center">
+      <img src="graph.php?type=sales">
+      <br /><br />
+      <img src="graph.php?type=iap">
+    </div>
+  </body>
+</html>

@@ -28,14 +28,18 @@ MacMini with OS-X Server and DynDNS is running fine for me even on a DSL connect
 
 In the [APP Store Reporting Instructions](http://www.apple.com/itunesnews/docs/AppStoreReportingInstructions.pdf) Apple provides the link to the Autoingestion class. This Java class will be used to download the daily reports, which are initially stored as a CSV file and imported later into a MySQL database.
 
-Create a folder anywhere you like for downloading the reports regularly, copy <tt>update.sh</tt> into this folder and open it to adjust your login credentials:
+Autoingestion.class now requires that the iTunes Connect username and password
+be placed in a properties file.  Create a file "Autoingestion.properties" with
+the following contents:
 
-	APPLELOGIN="your-apple-id"
-	APPLEPASSWORD="your-password"
+```
+userID = your-apple-id
+password = your-password
+```
 
-This is your Apple-ID and password for [itunesconnect](https://itunesconnect.apple.com).
+Note: If you don't wish to use your normal iTunes Connect user/password, you can create a "sales-only" sub-user with a different password.
 
-If you don't wish to use your normal iTunes Connect user/password, you can create a "sales-only" sub-user with a different password.
+Create a folder anywhere you like for downloading the reports regularly, copy <tt>update.sh</tt> into this folder and open it to configure various options.
 
 	APPLEVENDORID="your-vendor-id"
 
@@ -148,6 +152,22 @@ files onto a web server with PHP enabled, and install the
 set `base_url` to the URL to where you have installed the BOMAAB
 php script.  Also change the `require_once` directives to point to
 where you installed the JpGraph library.
+
+# Alternative implementation
+
+For some reason, Apple's Autoingestion server sometimes returns empty results,
+as documented in [this Stack Overflow question](http://stackoverflow.com/questions/17974964/itunes-connect-autoingestion-class-doing-nothing).
+This does not always happen, nor does it happen to everyone, and sometimes
+(as it happened with me) BOMAAB can be running just fine for a long time
+and then suddenly stop working.
+
+For these situations I have cobbled together an alternate means of
+acquiring the iTC data: using a remote host over ssh.  Use the "update_alternate.sh"
+script for this.  You will need to set the SSH_USERNAME and SSH_HOST variables
+in the script, as well as create a password-less ssh key for that remote host.
+Copy the Autoingestion.class script file 
+
+
 
 # Notes
 

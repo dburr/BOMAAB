@@ -1,15 +1,13 @@
 #!/bin/bash
 # enter your credentials here:
 # Apple login and password are now set in Autoingestion.properties.
-APPLEVENDORID="your-vendor-id"
+APPLEVENDORID="85237526"
 MYSQLUSER="your-mysql-username"
 MYSQLPASSWORD="your-mysql-password"
 # set this to a directory where you want the update.log placed
-# the default is fine for OSX; Linux/*BSD users might want to
-# set this to /var/log or something else
 LOGDIR="$HOME/Library/Logs"
 # set to YES if you have OS X-style `date' command (supports `-v' flag)
-OSXDATE="YES"
+OSXDATE="NO"
 # set to YES if your mysql command requires the `--local-infile' flag
 # (usually true for Linux/*BSD;  you'll know this if you get the error
 # `The used command is not allowed with this MySQL version'
@@ -18,18 +16,29 @@ OSXDATE="YES"
 #      local-infile=1
 # then restart mysqld
 #      /etc/init.d/mysqld restart
-REQUIRES_LOCAL_INFILE="NO"
-# Sometimes ITC update availability is delayed, with the result being that
-# at the time this script is run by cron, the updates for that day are not
-# yet available.  Enable this option to periodically retry downloading the
-# day's updates until they are available.  This requires that you set up
-# `atrun' command.  For OS X systems, run the following command:
-#    sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.atrun.plist
-# For other systems (e.g. Linux) see the `at' man page.
-RETRY_DAILY_DOWNLOADS_IF_UNAVAILABLE=YES
-
-# ensure that the mysql binary is in this PATH
+USE_LOCAL_INFILE="YES"
+#
+# Set to the username and host of the machine that runs Autoingestion.class
+SSH_HOST=home.borg-cube.com
+SSH_USER=dburr
+# assumes Autoingestion.java is in the same directory as this script;
+# if different, change this
+AUTOINGESTION_LOCATION="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# ensure that mysql is in this PATH
 export PATH=/bin:/usr/bin:/usr/local/bin
+
+# get full path to this script
+#pushd . > /dev/null
+#SCRIPT_PATH="${BASH_SOURCE[0]}";
+#while([ -h "${SCRIPT_PATH}" ]) do 
+#  cd "`dirname "${SCRIPT_PATH}"`"
+#  SCRIPT_PATH="$(readlink "`basename "${SCRIPT_PATH}"`")"; 
+#done
+#cd "`dirname "${SCRIPT_PATH}"`" > /dev/null
+#SCRIPT_PATH="`pwd`";
+#popd  > /dev/null
+#echo "srcipt=[${SCRIPT_PATH}]"
+#echo "pwd   =[`pwd`]"
 
 # get the full path to this script in case we need to re-run ourselves
 SCRIPT_NAME="$(cd $(dirname $0); pwd)/$(basename $0)"
@@ -46,9 +55,15 @@ else
 		DATE=$(date -d "1 day ago" +%Y%m%d)
 	fi
 fi
-java Autoingestion Autoingestion.properties $APPLEVENDORID Sales Daily Summary $DATE
+#cd "$AUTOINGESTION_LOCATION" && java Autoingestion $APPLELOGIN $APPLEPASSWORD $APPLEVENDORID Sales Daily Summary $DATE
+#pwd
+ssh $SSH_USER@$SSH_HOST java Autoingestion Autoingestion.properties 85237526 Sales Daily Summary $DATE
+#java Autoingestion Autoingestion.properties 85237526 Sales Daily Summary $DATE
 FNAME="S_D_${APPLEVENDORID}_${DATE}.txt"
-if [ -f "$FNAME.gz" ]; then
+#if [ -f "$FNAME.gz" ]; then
+if ssh -q $SSH_USER@$SSH_HOST test -e ${FNAME}.gz; then
+  scp -q $SSH_USER@$SSH_HOST:${FNAME}.gz . && ssh $SSH_USER@$SSH_HOST rm -f ${FNAME}.gz
+  rm -f "$FNAME"
 	gunzip "$FNAME.gz"
 	mysql --user=$MYSQLUSER --password=$MYSQLPASSWORD --database=itunesconnect -e "delete from sales where BeginDate='$DATE' and EndDate='$DATE'"
 	if [ "$USE_LOCAL_INFILE" = "YES" ]; then
@@ -62,11 +77,11 @@ else
 	echo "$(date "+%Y-%m-%d %H:%M:%S"): no file $FNAME.gz" >> "$LOGDIR/update.log"
   # no $1 means this script was run from cron, which means that today's
   # ITC update was probably not yet available when the script was run
-  if [[ -z $1 -a "$RETRY_DAILY_DOWNLOADS_IF_UNAVAILABLE" = "YES" ]]; then
+  if [[ -z $1 ]]; then
     echo "ITC stats are probably not yet available for today.  This script will keep"
-    echo "trying every hour until they are successfully downloaded.  Check the log"
-    echo "file for details and to confirm the successful download."
-    at now + 1 hour << _EOF_
+    echo "trying until they are successfully downloaded.  Check the log file for"
+    echo "details and to confirm the successful download."
+    XXX at now + 1 hour << _EOF_
 "$SCRIPT_NAME"
 _EOF_
   fi
