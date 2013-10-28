@@ -163,12 +163,12 @@ This does not always happen, nor does it happen to everyone, and sometimes
 and then suddenly stop working.
 
 For these situations I have cobbled together an alternate means of
-acquiring the iTC data: using a remote host over ssh.  Use the "update_alternate.sh"
-script for this.  You will need to set the SSH_USERNAME and SSH_HOST variables
-in the script, as well as create a password-less ssh key for that remote host.
-Copy the Autoingestion.class script file 
-
-
+acquiring the iTC data: using a remote host over ssh.  Use the
+`update_alternate.sh` script for this.  You will need to set the
+`SSH_USER` and `SSH_HOST` variables in the script, as well as create
+a password-less ssh key for that remote host. Copy the
+Autoingestion.class script file and Autoingestion.properties file to
+the remote host.
 
 # Notes
 
