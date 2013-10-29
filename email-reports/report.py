@@ -27,16 +27,18 @@ iap_data = {}
 update_data = {}
 
 def get_exchange_rate(country_code):
-  exchange_rate = 0.0
-  if country_code in exchange_rates:
-    exchange_rate = exchange_rates[country_code]
+  if country_code == "USD":
+    exchange_rate = 1.0
   else:
-    json_data = json.load(urllib2.urlopen("http://rate-exchange.appspot.com/currency?from=" + country_code + "&to=USD"))
-    if "rate" in json_data:
-      exchange_rate = json_data["rate"]
-      exchange_rates[country_code] = exchange_rate
+    if country_code in exchange_rates:
+      exchange_rate = exchange_rates[country_code]
     else:
-      exchange_rate = 0
+      json_data = json.load(urllib2.urlopen("http://rate-exchange.appspot.com/currency?from=" + country_code + "&to=USD"))
+      if "rate" in json_data:
+        exchange_rate = json_data["rate"]
+        exchange_rates[country_code] = exchange_rate
+      else:
+        exchange_rate = 0
   return exchange_rate
 
 #def get_exchange_rates():
