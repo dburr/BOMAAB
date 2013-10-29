@@ -11,9 +11,13 @@ from datetime import date, timedelta
 
 from_address = 'BOMAAB@' + socket.gethostname()
 to_address = 'dburr@borg-cube.com'
+db_host = 'localhost'
+db_user = 'database-user'
+db_password = 'database-password'
+db_name = 'database_name'
 
 # initialize database
-dbcon = mdb.connect('localhost', 'dburritc', 'mM7PXhjKs4X', 'itunesconnect');
+dbcon = mdb.connect(db_host, db_user, db_password, db_name);
 
 exchange_rates = {}
 sales_data = {}

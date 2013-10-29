@@ -179,15 +179,15 @@ I use [Wevito's automated daily iTunes sales e-mail service](https://wevito.com/
 and love it.  This is a great service that sends a daily email showing the
 previous day's sales and IAPs.  Unfortunately it is plagued with issues and
 I often do not get reports for days.  Now it looks like it may be gone for
-good (9/16/2013).  So at the risk of turning BOMAAB into a "kitchen sink
-syndrome" project, I have decided to implement my own daily app email
-delivery service.  To that end, I have written a Python script to generate
-daily iTunes Connect sales e-mails.  This script, located in the
-`email-reports` directory is named `report.py.`  It needs a lot of work
-but works well enough that I decided to include it.  You'll need to edit
-the script to put in the e-mail address you'd like your reports sent to,
-as well as your iTunes Connect database name, username and password.
-Then just run the script from `cron.`
+good (haven't received an update since 9/16/2013).  So at the risk of turning
+BOMAAB into a "kitchen sink syndrome" project, I have decided to implement my
+own daily app email reporting service.  To that end, I have written a Python
+script to generate daily iTunes Connect sales e-mails.  This script, located
+in the `email-reports` directory is named `report.py.`  It's very rough around
+the edges and definitely needs a lot more work but it works well enough that
+I decided to include it.  You'll need to edit the script to put in the e-mail
+address you'd like your reports sent to, as well as your iTunes Connect
+database name, username and password.  Then just run the script from `cron.`
 
 Things that still need to be done:
 
