@@ -201,7 +201,8 @@ Things that still need to be done:
   upgrades; I just didn't feel like doing it. :-P</del>
 * I've added support for separating out app sales, IAPs, and updates.
   However this is pretty hacky (even more so than the rest of the script)
-  and is definitely untested.
+  and is definitely untested.  Also there is no support for Newsstand
+  subscriptions; they appear as generic In-App Purchases.
 * Lots of error checking, prettification and etc.
 
 # Notes
