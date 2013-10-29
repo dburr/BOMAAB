@@ -1,15 +1,19 @@
 #!/bin/bash
+#
 # enter your credentials here:
 # Apple login and password are now set in Autoingestion.properties.
 APPLEVENDORID="your-vendor-id"
 MYSQLUSER="your-mysql-username"
 MYSQLPASSWORD="your-mysql-password"
+#
 # set this to a directory where you want the update.log placed
 # the default is fine for OSX; Linux/*BSD users might want to
 # set this to /var/log or something else
 LOGDIR="$HOME/Library/Logs"
+#
 # set to YES if you have OS X-style `date' command (supports `-v' flag)
 OSXDATE="YES"
+#
 # set to YES if your mysql command requires the `--local-infile' flag
 # (usually true for Linux/*BSD;  you'll know this if you get the error
 # `The used command is not allowed with this MySQL version'
@@ -19,6 +23,11 @@ OSXDATE="YES"
 # then restart mysqld
 #      /etc/init.d/mysqld restart
 REQUIRES_LOCAL_INFILE="NO"
+#
+# Set to YES to e-mail a copy of app activity.  Be sure and edit the
+# email script to set your e-mail address, etc.
+EMAIL_DAILY_REPORTS="YES"
+#
 # Sometimes ITC update availability is delayed, with the result being that
 # at the time this script is run by cron, the updates for that day are not
 # yet available.  Enable this option to periodically retry downloading the
@@ -58,6 +67,9 @@ if [ -f "$FNAME.gz" ]; then
 	fi
 	rm $FNAME
 	echo "$(date "+%Y-%m-%d %H:%M:%S"): $DATE imported" >> "$LOGDIR/update.log"
+  if [ "$EMAIL_DAILY_REPORTS" = "YES" ]; then
+    python $AUTOINGESTION_LOCATION/email-reports/report.py >/dev/null
+  fi
 else
 	echo "$(date "+%Y-%m-%d %H:%M:%S"): no file $FNAME.gz" >> "$LOGDIR/update.log"
   # no $1 means this script was run from cron, which means that today's

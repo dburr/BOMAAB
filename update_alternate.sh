@@ -1,13 +1,17 @@
 #!/bin/bash
+#
 # enter your credentials here:
 # Apple login and password are now set in Autoingestion.properties.
 APPLEVENDORID="85237526"
 MYSQLUSER="your-mysql-username"
 MYSQLPASSWORD="your-mysql-password"
+#
 # set this to a directory where you want the update.log placed
 LOGDIR="$HOME/Library/Logs"
+#
 # set to YES if you have OS X-style `date' command (supports `-v' flag)
 OSXDATE="NO"
+#
 # set to YES if your mysql command requires the `--local-infile' flag
 # (usually true for Linux/*BSD;  you'll know this if you get the error
 # `The used command is not allowed with this MySQL version'
@@ -18,9 +22,23 @@ OSXDATE="NO"
 #      /etc/init.d/mysqld restart
 USE_LOCAL_INFILE="YES"
 #
+# Set to YES to e-mail a copy of app activity.  Be sure and edit the
+# email script to set your e-mail address, etc.
+EMAIL_DAILY_REPORTS="YES"
+#
 # Set to the username and host of the machine that runs Autoingestion.class
-SSH_HOST=home.borg-cube.com
-SSH_USER=dburr
+SSH_HOST=host.example.com
+SSH_USER=username
+#
+# Sometimes ITC update availability is delayed, with the result being that
+# at the time this script is run by cron, the updates for that day are not
+# yet available.  Enable this option to periodically retry downloading the
+# day's updates until they are available.  This requires that you set up
+# `atrun' command.  For OS X systems, run the following command:
+#    sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.atrun.plist
+# For other systems (e.g. Linux) see the `at' man page.
+RETRY_DAILY_DOWNLOADS_IF_UNAVAILABLE=YES
+#
 # assumes Autoingestion.java is in the same directory as this script;
 # if different, change this
 AUTOINGESTION_LOCATION="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -73,15 +91,18 @@ if ssh -q $SSH_USER@$SSH_HOST test -e ${FNAME}.gz; then
 	fi
 	rm $FNAME
 	echo "$(date "+%Y-%m-%d %H:%M:%S"): $DATE imported" >> "$LOGDIR/update.log"
+  if [ "$EMAIL_DAILY_REPORTS" = "YES" ]; then
+    python $AUTOINGESTION_LOCATION/email-reports/report.py >/dev/null
+  fi
 else
 	echo "$(date "+%Y-%m-%d %H:%M:%S"): no file $FNAME.gz" >> "$LOGDIR/update.log"
   # no $1 means this script was run from cron, which means that today's
   # ITC update was probably not yet available when the script was run
-  if [[ -z $1 ]]; then
+  if [[ -z $1 -a "$RETRY_DAILY_DOWNLOADS_IF_UNAVAILABLE" = "YES" ]]; then
     echo "ITC stats are probably not yet available for today.  This script will keep"
     echo "trying until they are successfully downloaded.  Check the log file for"
     echo "details and to confirm the successful download."
-    XXX at now + 1 hour << _EOF_
+    at now + 1 hour << _EOF_
 "$SCRIPT_NAME"
 _EOF_
   fi
