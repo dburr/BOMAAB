@@ -154,13 +154,16 @@ set `base_url` to the URL to where you have installed the BOMAAB
 php script.  Also change the `require_once` directives to point to
 where you installed the JpGraph library.
 
-# Alternative implementation
+# Alternate implementation using remote data fetcher
 
 For some reason, Apple's Autoingestion server sometimes returns empty results,
 as documented in [this Stack Overflow question](http://stackoverflow.com/questions/17974964/itunes-connect-autoingestion-class-doing-nothing).
 This does not always happen, nor does it happen to everyone, and sometimes
 (as it happened with me) BOMAAB can be running just fine for a long time
-and then suddenly stop working.
+and then suddenly stop working.  In my case I have had BOMAAB running just
+fine on my dedicated server, when all of a sudden it stopped working and
+now only returns empty results; however BOMAAB runs just fine on a machine
+on my home network.
 
 For these situations I have cobbled together an alternate means of
 acquiring the iTC data: using a remote host over ssh.  Use the
