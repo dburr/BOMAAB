@@ -236,7 +236,7 @@ else:
 
     # include css here if needed
     message_html += "<y><H3>In-App Purchases for " + yesterday_as_string + "</H3>"
-    message_html += "<TABLE><TR><TH style=\"background-color: #000000; color: #FFFFFF; text-align: left\">SKU</TH><TH style=\"background-color: #000000; color: #FFFFFF; text-align: left\">App Title</TH><TH style=\"background-color: #000000; color: #FFFFFF; text-align: right\">Units</TH><TH style=\"background-color: #000000; color: #FFFFFF; text-align: right\">Proceeds</TH></TR>"
+    message_html += "<TABLE><TR><TH style=\"background-color: #000000; color: #FFFFFF; text-align: left\">SKU</TH><TH style=\"background-color: #000000; color: #FFFFFF; text-align: left\">Title</TH><TH style=\"background-color: #000000; color: #FFFFFF; text-align: right\">Units</TH><TH style=\"background-color: #000000; color: #FFFFFF; text-align: right\">Proceeds</TH></TR>"
     # 99FFFF blue
     # C8C8C8 gray
     line_no = 1
@@ -247,9 +247,8 @@ else:
       if line_no % 2 == 0:
         line_color = "#99FFFF"
       datum = iap_data[sku]
-      the_link = "https://itunes.apple.com/us/app/id" + datum["id"]
-      message_html += "<TR style=\"background-color: %s\"><TD ALIGN=left><A HREF=\"%s\">%s</A></TD>" % (line_color, the_link, sku)
-      message_html += "<TD ALIGN=left><A HREF=\"%s\">%s</A></TD>" % (the_link, datum["title"])
+      message_html += "<TR style=\"background-color: %s\"><TD ALIGN=left>%s</TD>" % (line_color, sku)
+      message_html += "<TD ALIGN=left>%s</TD>" % datum["title"]
       # https://itunes.apple.com/us/app/id425068705
       message_html += "<TD ALIGN=right>%ld</TD>" % datum["units"]
       message_html += "<TD ALIGN=right>$%.2f</TD></TR>" % datum["proceeds"]
