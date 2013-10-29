@@ -10,7 +10,7 @@ from email.mime.text import MIMEText
 from datetime import date, timedelta
 
 from_address = 'BOMAAB@' + socket.gethostname()
-to_address = 'dburr@borg-cube.com'
+to_address = 'you@your-isp.com'
 db_host = 'localhost'
 db_user = 'database-user'
 db_password = 'database-password'
