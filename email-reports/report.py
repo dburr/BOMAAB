@@ -98,7 +98,7 @@ else:
       for country in countries:
         # now get sales data for that country
         cur = dbcon.cursor()
-        cur.execute("SELECT Title, Version, Units, DeveloperProceeds, CustomerCurrency, CurrencyOfProceeds FROM sales WHERE SKU = '" + sku + "' AND CountryCode = '" + country + "' AND BeginDate = '" + yesterday_as_string + "' AND EndDate = '" + yesterday_as_string + "' ORDER BY 'SKU' ASC, 'CountryCode' ASC");
+        cur.execute("SELECT Title, Version, Units, DeveloperProceeds, CustomerCurrency, CurrencyOfProceeds, ProductTypeIdentifier, AppleIdentifier, ParentIdentifier FROM sales WHERE SKU = '" + sku + "' AND CountryCode = '" + country + "' AND BeginDate = '" + yesterday_as_string + "' AND EndDate = '" + yesterday_as_string + "' ORDER BY 'SKU' ASC, 'CountryCode' ASC");
         rows = cur.fetchall()
         if cur.rowcount == 0:
           print "Error: no data"
@@ -111,7 +111,10 @@ else:
             developer_proceeds = item[3]
             customer_currency = item[4]
             currency_of_proceeds = item[5]
-            print "version: %s units: %d proceeds: %.2f currency: %s (%s)" % (version, units, developer_proceeds, customer_currency, currency_of_proceeds)
+            product_type_identifier = item[6]
+            apple_identifier = item[7]
+            parent_identifier = item[8]
+            print "version: %s units: %d proceeds: %.2f currency: %s (%s)  type: %s  apple_id: %s  parent_id: %s" % (version, units, developer_proceeds, customer_currency, currency_of_proceeds, product_type_identifier, apple_identifier, parent_identifier)
             datum = {}
             if sku in sales_data:
               datum = sales_data[sku]
@@ -122,6 +125,7 @@ else:
             if "proceeds" in datum:
               sales_in_dollars += datum["proceeds"]
             datum["title"] = title
+            datum["id"] = apple_identifier
             datum["units"] = units
             datum["proceeds"] = sales_in_dollars
             sales_data[sku] = datum
@@ -150,8 +154,11 @@ else:
     if line_no % 2 == 0:
       line_color = "#99FFFF"
     datum = sales_data[sku]
-    message_html += "<TR style=\"background-color: " + line_color + "\"><TD ALIGN=left>" + sku + "</TD>"
-    message_html += "<TD ALIGN=left>" + datum["title"] + "</TD>"
+    the_link = "https://itunes.apple.com/us/app/id" + datum["id"]
+    message_html += "<TR style=\"background-color: %s\"><TD ALIGN=left><A HREF=\"%s\">%s</A></TD>" % (line_color, the_link, sku)
+    message_html += "<TD ALIGN=left><A HREF=\"%s\">%s</A></TD>" % (the_link, datum["title"])
+
+# https://itunes.apple.com/us/app/id425068705
     message_html += "<TD ALIGN=right>%ld</TD>" % datum["units"]
     message_html += "<TD ALIGN=right>$%.2f</TD></TR>" % datum["proceeds"]
     line_no += 1
