@@ -191,14 +191,14 @@ database name, username and password.  Then just run the script from `cron.`
 
 Things that still need to be done:
 
-* <s>Not sure if this script handles in-app purchases or not.  I think they are
+* <del>Not sure if this script handles in-app purchases or not. I think they are
   included as part of the general sales data.  Might be nice to separate them
-  out into a separate In-app Purchases section.</s>
-* <s>The script does not differentiate between new app purchases and upgrades.
+  out into a separate In-app Purchases section.</del>
+* <del>The script does not differentiate between new app purchases and upgrades.
   Upgrades are included in the number of units for each app.  However, since
   upgrades are free, this doesn't affect the proceeds shown.  There is a
   version number field in the iTunes data, so it is possible to separate out
-  upgrades; I just didn't feel like doing it. :-P</s>
+  upgrades; I just didn't feel like doing it. :-P</del>
 * I've added support for separating out app sales, IAPs, and updates.
   However this is pretty hacky (even more so than the rest of the script)
   and is definitely untested.
