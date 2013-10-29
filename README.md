@@ -173,6 +173,31 @@ a password-less ssh key for that remote host. Copy the
 Autoingestion.class script file and Autoingestion.properties file to
 the remote host.
 
+# Daily sales e-mails
+
+I use [Wevito's automated daily iTunes sales e-mail service](https://wevito.com/)
+and love it.  This is a great service that sends a daily email showing the
+previous day's sales and IAPs.  Unfortunately it is plagued with issues and
+I often do not get reports for days.  Now it looks like it may be gone for
+good (9/16/2013).  So at the risk of turning BOMAAB into a "kitchen sink
+syndrome" project, I have decided to implement my own daily app email
+delivery service.  To that end, I have written a Python script to generate
+daily iTunes Connect sales e-mails.  This script, located in the
+`email-reports` directory is named `report.py.`  It needs a lot of work
+but works well enough that I decided to include it.  You'll need to edit
+the script to put in the e-mail address you'd like your reports sent to,
+as well as your iTunes Connect database name, username and password.
+Then just run the script from `cron.`
+
+Things that still need to be done:
+
+* The script does not differentiate between new app purchases and upgrades.
+  Upgrades are included in the number of units for each app.  However, since
+  upgrades are free, this doesn't affect the proceeds shown.  There is a
+  version number field in the iTunes data, so it is possible to separate out
+  upgrades; I just didn't feel like doing it. :-P
+* Lots of error checking, prettification and etc.
+
 # Notes
 
 - you can add htaccess/htpasswd or any other security measures to your graph script folder
