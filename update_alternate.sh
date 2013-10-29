@@ -2,7 +2,7 @@
 #
 # enter your credentials here:
 # Apple login and password are now set in Autoingestion.properties.
-APPLEVENDORID="85237526"
+APPLEVENDORID="your-vendor-id"
 MYSQLUSER="your-mysql-username"
 MYSQLPASSWORD="your-mysql-password"
 #
