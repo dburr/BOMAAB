@@ -188,6 +188,10 @@ the edges and definitely needs a lot more work but it works well enough that
 I decided to include it.  You'll need to edit the script to put in the e-mail
 address you'd like your reports sent to, as well as your iTunes Connect
 database name, username and password.  Then just run the script from `cron.`
+Be sure and run it sufficiently long after BOMAAB's update script to ensure
+that the sales data has been downloaded.  Or, you can set `EMAIL_DAILY_REPORTS`
+to `YES` in `update.sh` and it will automatically run the e-mail report script
+after it has downloaded the latest data.
 
 Things that still need to be done:
 
