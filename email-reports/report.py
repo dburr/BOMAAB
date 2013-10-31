@@ -16,6 +16,9 @@ db_user = 'database-user'
 db_password = 'database-password'
 db_name = 'database_name'
 
+# set to True to include links to the approrpaite App Store pages for each item
+include_links = False
+
 # initialize database
 dbcon = mdb.connect(db_host, db_user, db_password, db_name);
 
@@ -214,8 +217,12 @@ else:
         line_color = "#99FFFF"
       datum = sales_data[sku]
       the_link = "https://itunes.apple.com/us/app/id" + datum["id"]
-      message_html += "<TR style=\"background-color: %s\"><TD ALIGN=left><A HREF=\"%s\">%s</A></TD>" % (line_color, the_link, sku)
-      message_html += "<TD ALIGN=left><A HREF=\"%s\">%s</A></TD>" % (the_link, datum["title"])
+      if include_links:
+        message_html += "<TR style=\"background-color: %s\"><TD ALIGN=left><A HREF=\"%s\">%s</A></TD>" % (line_color, the_link, sku)
+        message_html += "<TD ALIGN=left><A HREF=\"%s\">%s</A></TD>" % (the_link, datum["title"])
+      else:
+        message_html += "<TR style=\"background-color: %s\"><TD ALIGN=left>%s</TD>" % (line_color, sku)
+        message_html += "<TD ALIGN=left>%s</TD>" % datum["title"]
       # https://itunes.apple.com/us/app/id425068705
       message_html += "<TD ALIGN=right>%ld</TD>" % datum["units"]
       message_html += "<TD ALIGN=right>$%.2f</TD></TR>" % datum["proceeds"]
@@ -288,8 +295,12 @@ else:
         line_color = "#99FFFF"
       datum = update_data[sku]
       the_link = "https://itunes.apple.com/us/app/id" + datum["id"]
-      message_html += "<TR style=\"background-color: %s\"><TD ALIGN=left><A HREF=\"%s\">%s</A></TD>" % (line_color, the_link, sku)
-      message_html += "<TD ALIGN=left><A HREF=\"%s\">%s</A></TD>" % (the_link, datum["title"])
+      if include_links:
+        message_html += "<TR style=\"background-color: %s\"><TD ALIGN=left><A HREF=\"%s\">%s</A></TD>" % (line_color, the_link, sku)
+        message_html += "<TD ALIGN=left><A HREF=\"%s\">%s</A></TD>" % (the_link, datum["title"])
+      else:
+        message_html += "<TR style=\"background-color: %s\"><TD ALIGN=left>%s</TD>" % (line_color, sku)
+        message_html += "<TD ALIGN=left>%s</TD>" % datum["title"]
       # https://itunes.apple.com/us/app/id425068705
       message_html += "<TD ALIGN=right>%ld</TD>" % datum["units"]
       line_no += 1
