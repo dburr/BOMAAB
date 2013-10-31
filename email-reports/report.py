@@ -181,6 +181,9 @@ else:
               update_data[sku] = datum
               print datum
 
+  # keep running total
+  todays_take = 0.0
+
   # got all data, time to create message
   message = MIMEMultipart('alternative')
   message['From'] = from_address
@@ -219,6 +222,7 @@ else:
       line_no += 1
       total_proceeds += datum["proceeds"]
       total_units_sold += datum["units"]
+      todays_take += datum["proceeds"]
 
     message_html += '<TFOOT style="background-color: #000000; color: #FFFFFF">'
     message_html += '<TD></TD>'
@@ -254,6 +258,7 @@ else:
       message_html += "<TD ALIGN=right>$%.2f</TD></TR>" % datum["proceeds"]
       line_no += 1
       total_proceeds += datum["proceeds"]
+      todays_take += datum["proceeds"]
       total_units_sold += datum["units"]
 
     message_html += '<TFOOT style="background-color: #000000; color: #FFFFFF">'
@@ -296,6 +301,8 @@ else:
     message_html += '<TD ALIGN=right>%ld</TD>' % total_units_sold
 
     message_html += "</TFOOT></TABLE></p>"
+    
+    message_html += "<p><h3>Today's Take: $%.2f</h3></p>" % todays_take
 
   part1 = MIMEText(message_text, 'plain')
   part2 = MIMEText(message_html, 'html')
