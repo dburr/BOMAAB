@@ -233,7 +233,7 @@ else:
 
     message_html += '<TFOOT style="background-color: #000000; color: #FFFFFF">'
     message_html += '<TD></TD>'
-    message_html += '<TD ALIGN=right>TOTALS</TD>'
+    message_html += '<TD ALIGN=right>TOTAL</TD>'
     message_html += '<TD ALIGN=right>%ld</TD>' % total_units_sold
     message_html += '<TD ALIGN=right>$%.2f</TD>' % total_proceeds
 
@@ -270,7 +270,7 @@ else:
 
     message_html += '<TFOOT style="background-color: #000000; color: #FFFFFF">'
     message_html += '<TD></TD>'
-    message_html += '<TD ALIGN=right>TOTALS</TD>'
+    message_html += '<TD ALIGN=right>TOTAL</TD>'
     message_html += '<TD ALIGN=right>%ld</TD>' % total_units_sold
     message_html += '<TD ALIGN=right>$%.2f</TD>' % total_proceeds
 
@@ -308,7 +308,7 @@ else:
 
     message_html += '<TFOOT style="background-color: #000000; color: #FFFFFF">'
     message_html += '<TD></TD>'
-    message_html += '<TD ALIGN=right>TOTALS</TD>'
+    message_html += '<TD ALIGN=right>TOTAL</TD>'
     message_html += '<TD ALIGN=right>%ld</TD>' % total_units_sold
 
     message_html += "</TFOOT></TABLE></p>"
