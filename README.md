@@ -185,7 +185,10 @@ own daily app email reporting service.  To that end, I have written a Python
 script to generate daily iTunes Connect sales e-mails.  This script, located
 in the `email-reports` directory is named `report.py.`  It's very rough around
 the edges and definitely needs a lot more work but it works well enough that
-I decided to include it.  You'll need to edit the script to put in the e-mail
+I decided to include it.  You'll need to sign up for an account with the
+[Currency API](http://currency-api.appspot.com) (it's free).  They will
+give you an API key which you will need to add to the python script.
+You'll also need to edit the script to put in the e-mail
 address you'd like your reports sent to, as well as your iTunes Connect
 database name, username and password.  Then just run the script from `cron.`
 Be sure and run it sufficiently long after BOMAAB's update script to ensure

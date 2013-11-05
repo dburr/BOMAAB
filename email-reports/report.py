@@ -16,6 +16,9 @@ db_user = 'database-user'
 db_password = 'database-password'
 db_name = 'database_name'
 
+# Sign up for a free API key at: http://currency-api.appspot.com
+api_key = 'API-KEY'
+
 # set to True to include links to the approrpaite App Store pages for each item
 include_links = False
 
@@ -36,12 +39,14 @@ def get_exchange_rate(country_code):
     if country_code in exchange_rates:
       exchange_rate = exchange_rates[country_code]
     else:
-      json_data = json.load(urllib2.urlopen("http://rate-exchange.appspot.com/currency?from=" + country_code + "&to=USD"))
+      json_data = json.load(urllib2.urlopen("http://currency-api.appspot.com/api/" + country_code + "/USD.json?key=" + api_key))
       if "rate" in json_data:
         exchange_rate = json_data["rate"]
+        #print "rate = %f" % exchange_rate
         exchange_rates[country_code] = exchange_rate
       else:
         exchange_rate = 0
+  #print "returning %f" % exchange_rate
   return exchange_rate
 
 #def get_exchange_rates():
