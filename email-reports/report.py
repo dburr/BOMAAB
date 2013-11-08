@@ -28,25 +28,39 @@ dbcon = mdb.connect(db_host, db_user, db_password, db_name);
 # exchange rates hash populated on demand
 exchange_rates = {}
 
+# warning messages
+warnings = []
+
 sales_data = {}
 iap_data = {}
 update_data = {}
 
+# some currencies are currently unsupported by the Currency API,
+# so we pre-define their exchange rates here
+unsupported_currencies = {"CNY": 0.16}
+
 def get_exchange_rate(country_code):
+  global warnings
   if country_code == "USD":
     exchange_rate = 1.0
+  elif country_code in unsupported_currencies:
+    print "WARNING: %s unsupported by currency API, using predefined value of %f" % (country_code, unsupported_currencies[country_code])
+    warnings.append("%s unsupported by currency API, using predefined value of %f" % (country_code, unsupported_currencies[country_code]))
+    exchange_rate = unsupported_currencies[country_code]
   else:
     if country_code in exchange_rates:
       exchange_rate = exchange_rates[country_code]
     else:
       json_data = json.load(urllib2.urlopen("http://currency-api.appspot.com/api/" + country_code + "/USD.json?key=" + api_key))
-      if "rate" in json_data:
+      if "success" in json_data:
         exchange_rate = json_data["rate"]
-        #print "rate = %f" % exchange_rate
+        print "rate = %f" % exchange_rate
         exchange_rates[country_code] = exchange_rate
       else:
+        print "WARNING: could not get exchange rate for " + country_code + " (possibly unsupported by API), assuming 1.0"
+        warnings.append("could not get exchange rate for " + country_code + " (possibly unsupported by API), asuming 1.0")
         exchange_rate = 0
-  #print "returning %f" % exchange_rate
+  print "returning %f" % exchange_rate
   return exchange_rate
 
 #def get_exchange_rates():
@@ -319,6 +333,12 @@ else:
     message_html += "</TFOOT></TABLE></p>"
     
     message_html += "<p><h3>Today's Take: $%.2f</h3></p>" % todays_take
+
+    if warnings:
+      message_html += "<p><b>Warnings:</b><ol>"
+      for warning in warnings:
+        message_html += "<li>" + warning + "</li>"
+      message_html += "</ol></p>"
 
   part1 = MIMEText(message_text, 'plain')
   part2 = MIMEText(message_html, 'html')
