@@ -9,16 +9,15 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from datetime import date, timedelta
 
+# Configure these values
 from_address = 'BOMAAB@' + socket.gethostname()
 to_address = 'you@email.com'
 db_host = 'localhost'
 db_user = 'database-user'
 db_password = 'database-password'
 db_name = 'database_name'
-
 # Sign up for a free API key at: http://currency-api.appspot.com
 api_key = 'API-KEY'
-
 # set to True to include links to the approrpaite App Store pages for each item
 include_links = False
 
@@ -299,7 +298,7 @@ else:
     print "SUMMARY OF UPDATE DATA:"
     for sku in update_data:
       datum = update_data[sku]
-      print "Title: %s  Units sold: %s" % (datum["title"], datum["units"])
+      print "Title: %s  Units downloaded: %s" % (datum["title"], datum["units"])
 
     # include css here if needed
     message_html += "<y><H3>App Updates for " + yesterday_as_string + "</H3>"
@@ -332,13 +331,13 @@ else:
 
     message_html += "</TFOOT></TABLE></p>"
     
-    message_html += "<p><h3>Today's Take: $%.2f</h3></p>" % todays_take
+  message_html += "<p><h3>Today's Take: $%.2f</h3></p>" % todays_take
 
-    if warnings:
-      message_html += "<p><b>Warnings:</b><ol>"
-      for warning in warnings:
-        message_html += "<li>" + warning + "</li>"
-      message_html += "</ol></p>"
+  if warnings:
+    message_html += "<p><b>Warnings:</b><ol>"
+    for warning in warnings:
+      message_html += "<li>" + warning + "</li>"
+    message_html += "</ol></p>"
 
   part1 = MIMEText(message_text, 'plain')
   part2 = MIMEText(message_html, 'html')
