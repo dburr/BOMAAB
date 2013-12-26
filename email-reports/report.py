@@ -154,7 +154,7 @@ else:
               if "units" in datum:
                 units += datum["units"]
               exchange_rate = get_exchange_rate(currency_of_proceeds)
-              sales_in_dollars = developer_proceeds * exchange_rate
+              sales_in_dollars = (developer_proceeds * exchange_rate) * units
               if "proceeds" in datum:
                 sales_in_dollars += datum["proceeds"]
               datum["title"] = title
@@ -176,7 +176,7 @@ else:
               if "units" in datum:
                 units += datum["units"]
               exchange_rate = get_exchange_rate(currency_of_proceeds)
-              sales_in_dollars = developer_proceeds * exchange_rate
+              sales_in_dollars = (developer_proceeds * exchange_rate) * units
               if "proceeds" in datum:
                 sales_in_dollars += datum["proceeds"]
               datum["title"] = title
