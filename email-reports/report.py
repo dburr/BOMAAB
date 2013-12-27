@@ -21,6 +21,10 @@ api_key = 'API-KEY'
 # set to True to include links to the approrpaite App Store pages for each item
 include_links = False
 
+###################################################################
+## NO CHANGES BELOW THIS LINE UNLESS YOU KNOW WHAT YOU"RE DOING! ##
+###################################################################
+
 # initialize database
 dbcon = mdb.connect(db_host, db_user, db_password, db_name);
 
@@ -92,9 +96,15 @@ def get_exchange_rate(country_code):
 #    rate = 1
 #  return rate
 
-yesterday = date.today() - timedelta(1)
+time_delta = 1
+
+if len(sys.argv) == 2:
+  time_delta = int(sys.argv[1])
+
+yesterday = date.today() - timedelta(time_delta)
 yesterday_as_string = yesterday.strftime('%Y-%m-%d')
 print yesterday_as_string
+#sys.exit(1)
 
 #get_exchange_rates()
 
