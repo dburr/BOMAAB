@@ -1,10 +1,14 @@
 #!/usr/bin/python
 
+import sys
 import json
 import urllib2
 import MySQLdb as mdb
 import smtplib
 import socket
+import pycountry
+import operator
+from collections import OrderedDict
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from datetime import date, timedelta
@@ -244,8 +248,9 @@ else:
   # should almost always have sales data, but better safe than sorry
   if sales_data:
     print "SUMMARY OF SALES DATA:"
-    for sku in sales_data:
-      datum = sales_data[sku]
+    sorted_sales_data = OrderedDict(sorted(sales_data.iteritems(), key=lambda x: x[1]['units'], reverse=True))
+    for sku in sorted_sales_data:
+      datum = sorted_sales_data[sku]
       print "Title: %s  Units sold: %s  Proceeds in USD: $%.2f" % (datum["title"], datum["units"], datum["proceeds"])
 
     message_html += "<p><H3>Daily App Sales for " + yesterday_as_string + "</H3>"
@@ -255,11 +260,11 @@ else:
     line_no = 1
     total_proceeds = 0.0
     total_units_sold = 0
-    for sku in sales_data:
+    for sku in sorted_sales_data:
       line_color = "#C8C8C8" 
       if line_no % 2 == 0:
         line_color = "#99FFFF"
-      datum = sales_data[sku]
+      datum = sorted_sales_data[sku]
       the_link = "https://itunes.apple.com/us/app/id" + datum["id"]
       if include_links:
         message_html += "<TR style=\"background-color: %s\"><TD ALIGN=left><A HREF=\"%s\">%s</A></TD>" % (line_color, the_link, sku)
@@ -290,12 +295,16 @@ else:
       # C8C8C8 gray
       line_no = 1
       total_units_sold = 0
-      for country in sales_by_country:
+      sorted_sales_by_country = sorted(sales_by_country.iteritems(), key=operator.itemgetter(1), reverse=True)
+      print sorted_sales_by_country
+      for datum in sorted_sales_by_country:
+        country = datum[0]
+        nunits = datum[1]
         the_country = pycountry.countries.get(alpha2=country)
         line_color = "#C8C8C8" 
         if line_no % 2 == 0:
           line_color = "#99FFFF"
-        nunits = sales_by_country[country]
+        #nunits = sales_by_country[country]
         message_html += "<TR style=\"background-color: %s\"><TD ALIGN=left>%s</TD>" % (line_color, the_country.name)
         message_html += "<TD ALIGN=left>%ld</TD></TR>" % nunits
         line_no += 1
@@ -308,8 +317,9 @@ else:
 
   if iap_data:
     print "SUMMARY OF IAP DATA:"
-    for sku in iap_data:
-      datum = iap_data[sku]
+    sorted_iap_data = OrderedDict(sorted(iap_data.iteritems(), key=lambda x: x[1]['units'], reverse=True))
+    for sku in sorted_iap_data:
+      datum = sorted_iap_data[sku]
       print "Title: %s  Units sold: %s  Proceeds in USD: $%.2f" % (datum["title"], datum["units"], datum["proceeds"])
 
     # include css here if needed
@@ -320,11 +330,11 @@ else:
     line_no = 1
     total_proceeds = 0.0
     total_units_sold = 0
-    for sku in iap_data:
+    for sku in sorted_iap_data:
       line_color = "#C8C8C8" 
       if line_no % 2 == 0:
         line_color = "#99FFFF"
-      datum = iap_data[sku]
+      datum = sorted_iap_data[sku]
       message_html += "<TR style=\"background-color: %s\"><TD ALIGN=left>%s</TD>" % (line_color, sku)
       message_html += "<TD ALIGN=left>%s</TD>" % datum["title"]
       # https://itunes.apple.com/us/app/id425068705
@@ -350,7 +360,10 @@ else:
       # C8C8C8 gray
       line_no = 1
       total_units_sold = 0
-      for country in iaps_by_country:
+      sorted_iaps_by_country = sorted(iaps_by_country.iteritems(), key=operator.itemgetter(1), reverse=True)
+      for datum in sorted_iaps_by_country:
+        country = datum[0]
+        nunits = datum[1]
         the_country = pycountry.countries.get(alpha2=country)
         line_color = "#C8C8C8" 
         if line_no % 2 == 0:
@@ -368,8 +381,9 @@ else:
 
   if update_data:
     print "SUMMARY OF UPDATE DATA:"
-    for sku in update_data:
-      datum = update_data[sku]
+    sorted_update_data = OrderedDict(sorted(update_data.iteritems(), key=lambda x: x[1]['units'], reverse=True))
+    for sku in sorted_update_data:
+      datum = sorted_update_data[sku]
       print "Title: %s  Units downloaded: %s" % (datum["title"], datum["units"])
 
     # include css here if needed
@@ -379,11 +393,11 @@ else:
     # C8C8C8 gray
     line_no = 1
     total_units_sold = 0
-    for sku in update_data:
+    for sku in sorted_update_data:
       line_color = "#C8C8C8" 
       if line_no % 2 == 0:
         line_color = "#99FFFF"
-      datum = update_data[sku]
+      datum = sorted_update_data[sku]
       the_link = "https://itunes.apple.com/us/app/id" + datum["id"]
       if include_links:
         message_html += "<TR style=\"background-color: %s\"><TD ALIGN=left><A HREF=\"%s\">%s</A></TD>" % (line_color, the_link, sku)
@@ -410,7 +424,10 @@ else:
       # C8C8C8 gray
       line_no = 1
       total_units_sold = 0
-      for country in updates_by_country:
+      sorted_updates_by_country = sorted(updates_by_country.iteritems(), key=operator.itemgetter(1), reverse=True)
+      for datum in sorted_updates_by_country:
+        country = datum[0]
+        nunits = datum[1]
         the_country = pycountry.countries.get(alpha2=country)
         line_color = "#C8C8C8" 
         if line_no % 2 == 0:
