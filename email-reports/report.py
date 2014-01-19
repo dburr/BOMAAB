@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import sys
+import socket
 import json
 import urllib2
 import MySQLdb as mdb
@@ -13,21 +14,10 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from datetime import date, timedelta
 
-# Configure these values
-from_address = 'BOMAAB@' + socket.gethostname()
-to_address = 'you@email.com'
-db_host = 'localhost'
-db_user = 'database-user'
-db_password = 'database-password'
-db_name = 'database_name'
-# Sign up for a free API key at: http://currency-api.appspot.com
-api_key = 'API-KEY'
-# set to True to include links to the approrpaite App Store pages for each item
-include_links = False
-
-###################################################################
-## NO CHANGES BELOW THIS LINE UNLESS YOU KNOW WHAT YOU"RE DOING! ##
-###################################################################
+# import options
+# this is probably not the best way to do it, but oh well
+sys.dont_write_bytecode = True
+from options import *
 
 # initialize database
 dbcon = mdb.connect(db_host, db_user, db_password, db_name);
