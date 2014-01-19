@@ -38,6 +38,10 @@ sales_data = {}
 iap_data = {}
 update_data = {}
 
+sales_by_country = {}
+iaps_by_country = {}
+updates_by_country = {}
+
 # some currencies are currently unsupported by the Currency API,
 # so we pre-define their exchange rates here
 unsupported_currencies = {"CNY": 0.16}
@@ -159,6 +163,10 @@ else:
             or product_type_identifier == "1T" \
             or product_type_identifier == "F1":
               print "APP SALE"
+              if country in sales_by_country:
+                sales_by_country[country] += units
+              else:
+                sales_by_country[country] = units
               if sku in sales_data:
                 datum = sales_data[sku]
               if "units" in datum:
@@ -181,6 +189,10 @@ else:
             or product_type_identifier == "IAC" \
             or product_type_identifier == "FI1":
               print "IAP"
+              if country in iaps_by_country:
+                iaps_by_country[country] += units
+              else:
+                iaps_by_country[country] = units
               if sku in iap_data:
                 datum = iap_data[sku]
               if "units" in datum:
@@ -201,6 +213,10 @@ else:
             or product_type_identifier == "7T" \
             or product_type_identifier == "F7":
               print "UPDATE"
+              if country in updates_by_country:
+                updates_by_country[country] += units
+              else:
+                updates_by_country[country] = units
               if sku in update_data:
                 datum = update_data[sku]
               if "units" in datum:
@@ -267,6 +283,29 @@ else:
 
     message_html += "</TFOOT></TABLE></p>"
 
+    if sales_by_country:
+      message_html += "<p><H3>Sales By Country:</H3>"
+      message_html += "<TABLE><TR><TH style=\"background-color: #000000; color: #FFFFFF; text-align: left\">Country</TH><TH style=\"background-color: #000000; color: #FFFFFF; text-align: left\">Units</TH></TR>"
+      # 99FFFF blue
+      # C8C8C8 gray
+      line_no = 1
+      total_units_sold = 0
+      for country in sales_by_country:
+        the_country = pycountry.countries.get(alpha2=country)
+        line_color = "#C8C8C8" 
+        if line_no % 2 == 0:
+          line_color = "#99FFFF"
+        nunits = sales_by_country[country]
+        message_html += "<TR style=\"background-color: %s\"><TD ALIGN=left>%s</TD>" % (line_color, the_country.name)
+        message_html += "<TD ALIGN=left>%ld</TD></TR>" % nunits
+        line_no += 1
+        total_units_sold += nunits
+
+      message_html += '<TFOOT style="background-color: #000000; color: #FFFFFF">'
+      message_html += '<TD ALIGN=right>TOTAL</TD>'
+      message_html += '<TD ALIGN=right>%ld</TD>' % total_units_sold
+      message_html += "</TFOOT></TABLE></p>"
+
   if iap_data:
     print "SUMMARY OF IAP DATA:"
     for sku in iap_data:
@@ -304,6 +343,29 @@ else:
 
     message_html += "</TFOOT></TABLE></p>"
 
+    if iaps_by_country:
+      message_html += "<p><H3>In-App Purchases By Country:</H3>"
+      message_html += "<TABLE><TR><TH style=\"background-color: #000000; color: #FFFFFF; text-align: left\">Country</TH><TH style=\"background-color: #000000; color: #FFFFFF; text-align: left\">Units</TH></TR>"
+      # 99FFFF blue
+      # C8C8C8 gray
+      line_no = 1
+      total_units_sold = 0
+      for country in iaps_by_country:
+        the_country = pycountry.countries.get(alpha2=country)
+        line_color = "#C8C8C8" 
+        if line_no % 2 == 0:
+          line_color = "#99FFFF"
+        nunits = iaps_by_country[country]
+        message_html += "<TR style=\"background-color: %s\"><TD ALIGN=left>%s</TD>" % (line_color, the_country.name)
+        message_html += "<TD ALIGN=left>%ld</TD></TR>" % nunits
+        line_no += 1
+        total_units_sold += nunits
+
+      message_html += '<TFOOT style="background-color: #000000; color: #FFFFFF">'
+      message_html += '<TD ALIGN=right>TOTAL</TD>'
+      message_html += '<TD ALIGN=right>%ld</TD>' % total_units_sold
+      message_html += "</TFOOT></TABLE></p>"
+
   if update_data:
     print "SUMMARY OF UPDATE DATA:"
     for sku in update_data:
@@ -340,6 +402,33 @@ else:
     message_html += '<TD ALIGN=right>%ld</TD>' % total_units_sold
 
     message_html += "</TFOOT></TABLE></p>"
+
+    if updates_by_country:
+      message_html += "<p><H3>Updates By Country:</H3>"
+      message_html += "<TABLE><TR><TH style=\"background-color: #000000; color: #FFFFFF; text-align: left\">Country</TH><TH style=\"background-color: #000000; color: #FFFFFF; text-align: left\">Units</TH></TR>"
+      # 99FFFF blue
+      # C8C8C8 gray
+      line_no = 1
+      total_units_sold = 0
+      for country in updates_by_country:
+        the_country = pycountry.countries.get(alpha2=country)
+        line_color = "#C8C8C8" 
+        if line_no % 2 == 0:
+          line_color = "#99FFFF"
+        nunits = updates_by_country[country]
+        message_html += "<TR style=\"background-color: %s\"><TD ALIGN=left>%s</TD>" % (line_color, the_country.name)
+        message_html += "<TD ALIGN=left>%ld</TD></TR>" % nunits
+        line_no += 1
+        total_units_sold += nunits
+
+      message_html += '<TFOOT style="background-color: #000000; color: #FFFFFF">'
+      message_html += '<TD ALIGN=right>TOTAL</TD>'
+      message_html += '<TD ALIGN=right>%ld</TD>' % total_units_sold
+      message_html += "</TFOOT></TABLE></p>"
+
+
+
+
     
   message_html += "<p><h3>Today's Take: $%.2f</h3></p>" % todays_take
 
