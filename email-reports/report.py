@@ -38,7 +38,7 @@ updates_by_country = {}
 
 # some currencies are currently unsupported by the Currency API,
 # so we pre-define their exchange rates here
-unsupported_currencies = {"CNY": 0.16}
+unsupported_currencies = {"CNY": 0.17, "NOK": 0.16}
 
 def get_exchange_rate(country_code):
   global warnings
