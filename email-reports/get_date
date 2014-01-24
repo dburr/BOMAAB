@@ -1,0 +1,7 @@
+#!/bin/bash
+case "$OSTYPE" in
+  darwin*) DATE_STRING="`date -u +"%Y-%m-%dT%H:%M:%SZ"`" ;;
+  linux*)  DATE_STRING="`date -u +"%Y-%m-%dT%H:%M:%SZ"`" ;;
+  *)       DATE_STRING="`date -I`" ;;
+esac
+echo $DATE_STRING
