@@ -9,6 +9,7 @@ import smtplib
 import socket
 import pycountry
 import operator
+import os.path
 from collections import OrderedDict
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -38,7 +39,19 @@ updates_by_country = {}
 
 # some currencies are currently unsupported by the Currency API,
 # so we pre-define their exchange rates here
-unsupported_currencies = {"CNY": 0.17, "NOK": 0.16}
+# NOTE: now loading from file
+#unsupported_currencies = {}
+#unsupported_currencies = {"CNY": 0.17, "NOK": 0.16}
+unsupported_currencies = {}
+if os.path.isfile('unsupported_currency_rates.json'):
+  try:
+    unsupported_currency_json_data=open('unsupported_currency_rates.json')
+    unsupported_currencies = json.load(unsupported_currency_json_data)
+    print unsupported_currencies
+  except IOError:
+    print 'Error: could not read unsupported_currency_rates.json, starting with empty data set'
+else:
+  print "Warning: could not find unsupported_currency_rates.json, starting with empty data set"
 
 def get_exchange_rate(country_code):
   global warnings
@@ -53,14 +66,23 @@ def get_exchange_rate(country_code):
       exchange_rate = exchange_rates[country_code]
     else:
       json_data = json.load(urllib2.urlopen("http://currency-api.appspot.com/api/" + country_code + "/USD.json?key=" + api_key))
+      print json_data
       if "success" in json_data:
-        exchange_rate = json_data["rate"]
-        print "rate = %f" % exchange_rate
-        exchange_rates[country_code] = exchange_rate
+        success = json_data["success"]
+        if success:
+          print "SUCCESS"
+          exchange_rate = json_data["rate"]
+          print "rate = %f" % exchange_rate
+          exchange_rates[country_code] = exchange_rate
+        else:
+          print "FAIL"
+          print "WARNING: could not get exchange rate for " + country_code + " (possibly unsupported by API), assuming 1.0"
+          warnings.append("could not get exchange rate for " + country_code + " (possibly unsupported by API), asuming 1.0")
+          exchange_rate = 1
       else:
-        print "WARNING: could not get exchange rate for " + country_code + " (possibly unsupported by API), assuming 1.0"
-        warnings.append("could not get exchange rate for " + country_code + " (possibly unsupported by API), asuming 1.0")
-        exchange_rate = 0
+          print "WARNING: could not get exchange rate for " + country_code + " (possibly unsupported by API), assuming 1.0"
+          warnings.append("could not get exchange rate for " + country_code + " (possibly unsupported by API), asuming 1.0")
+          exchange_rate = 1
   print "returning %f" % exchange_rate
   return exchange_rate
 
