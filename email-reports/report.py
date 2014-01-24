@@ -43,7 +43,9 @@ updates_by_country = {}
 #unsupported_currencies = {}
 #unsupported_currencies = {"CNY": 0.17, "NOK": 0.16}
 unsupported_currencies = {}
-if os.path.isfile('unsupported_currency_rates.json'):
+unsup_file_path = os.path.abspath(os.path.dirname(sys.argv[0])) + os.path.sep + 'unsupported_currency_rates.json'
+print unsup_file_path
+if os.path.isfile(unsup_file_path):
   try:
     unsupported_currency_json_data=open('unsupported_currency_rates.json')
     unsupported_currencies = json.load(unsupported_currency_json_data)
@@ -58,8 +60,8 @@ def get_exchange_rate(country_code):
   if country_code == "USD":
     exchange_rate = 1.0
   elif country_code in unsupported_currencies:
-    print "WARNING: %s unsupported by currency API, using predefined value of %f" % (country_code, unsupported_currencies[country_code])
-    warnings.append("%s unsupported by currency API, using predefined value of %f" % (country_code, unsupported_currencies[country_code]))
+    print "WARNING: using predefined exchange rate of %f for %s" % (unsupported_currencies[country_code], country_code)
+    warnings.append("using predefined exchange rate of %f for %s" % (unsupported_currencies[country_code], country_code))
     exchange_rate = unsupported_currencies[country_code]
   else:
     if country_code in exchange_rates:
