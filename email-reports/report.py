@@ -47,7 +47,7 @@ unsup_file_path = os.path.abspath(os.path.dirname(sys.argv[0])) + os.path.sep + 
 print unsup_file_path
 if os.path.isfile(unsup_file_path):
   try:
-    unsupported_currency_json_data=open('unsupported_currency_rates.json')
+    unsupported_currency_json_data=open(unsup_file_path)
     unsupported_currencies = json.load(unsupported_currency_json_data)
     print unsupported_currencies
   except IOError:
