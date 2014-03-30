@@ -10,6 +10,7 @@ import socket
 import pycountry
 import operator
 import os.path
+from calendar import monthrange
 from collections import OrderedDict
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -119,21 +120,46 @@ def get_exchange_rate(country_code):
 #  return rate
 
 time_delta = 1
+do_monthly = False
+start_date = ""
+end_date = ""
+month_year = ""
 
 if len(sys.argv) == 2:
-  time_delta = int(sys.argv[1])
+  if sys.argv[1] == "monthly":
+    do_monthly = True
+    # assume this is being run on the 1st of the new month
+    # so we need to find the last month and calc # of days
+    today = date.today()
+    first = date(day=1, month=today.month, year=today.year)
+    lastMonthEnd = first - timedelta(days=1)
+    lastMonthStart = date(day=1, month=lastMonthEnd.month, year=lastMonthEnd.year)
+    start_date = lastMonthStart.strftime('%Y-%m-%d')
+    end_date = lastMonthEnd.strftime('%Y-%m-%d')
+    month_year = lastMonthStart.strftime('%Y-%m')
+    print start_date
+    print end_date
+    #date_range = monthrange(2011, 2)
 
-yesterday = date.today() - timedelta(time_delta)
-yesterday_as_string = yesterday.strftime('%Y-%m-%d')
-print yesterday_as_string
-#sys.exit(1)
+    #print date_range
+    # print lastMonth.strftime("%Y%m")
+  else:
+    time_delta = int(sys.argv[1])
+
+if do_monthly:
+  query = "SELECT DISTINCT SKU FROM sales WHERE BeginDate = '" + start_date + "' AND EndDate = '" + end_date + "' ORDER BY 'SKU' ASC";
+else:
+  yesterday = date.today() - timedelta(time_delta)
+  yesterday_as_string = yesterday.strftime('%Y-%m-%d')
+  print yesterday_as_string
+  query = "SELECT DISTINCT SKU FROM sales WHERE BeginDate = '" + yesterday_as_string + "' AND EndDate = '" + yesterday_as_string + "' ORDER BY 'SKU' ASC";
 
 #get_exchange_rates()
 
 # get skus
 cur = dbcon.cursor()
 #cur.execute("SELECT * FROM sales WHERE BeginDate = '" + yesterday_as_string + "' AND EndDate = '" + yesterday_as_string + "' ORDER BY 'SKU' ASC, 'CountryCode' ASC");
-cur.execute("SELECT DISTINCT SKU FROM sales WHERE BeginDate = '" + yesterday_as_string + "' AND EndDate = '" + yesterday_as_string + "' ORDER BY 'SKU' ASC");
+cur.execute(query);
 rows = cur.fetchall()
 if cur.rowcount == 0:
   print "Error: no data"
@@ -253,7 +279,10 @@ else:
   message = MIMEMultipart('alternative')
   message['From'] = from_address
   message['To'] = to_address
-  message['Subject'] = "Daily App Sales for " + yesterday_as_string
+  if do_monthly:
+    message['Subject'] = "Monthly App Sales for " + month_year
+  else:
+    message['Subject'] = "Daily App Sales for " + yesterday_as_string
   message_text = "Please view this message in a HTML capable email client."
   message_html = "<HTML><head><style>"
   # include css here if needed
