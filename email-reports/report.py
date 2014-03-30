@@ -147,19 +147,29 @@ if len(sys.argv) == 2:
     time_delta = int(sys.argv[1])
 
 if do_monthly:
-  query = "SELECT DISTINCT SKU FROM sales WHERE BeginDate = '" + start_date + "' AND EndDate = '" + end_date + "' ORDER BY 'SKU' ASC";
+  query1 = "SELECT DISTINCT SKU FROM sales WHERE BeginDate BETWEEN '" + start_date + "' AND '" + end_date + "' ORDER BY 'SKU' ASC"
+  query2 = "SELECT DISTINCT CountryCode FROM sales WHERE SKU = '__SKU__' AND BeginDate BETWEEN '" + start_date + "' AND '" + end_date + "' ORDER BY 'CountryCode' ASC"
+  query3 = "SELECT Title, Version, Units, DeveloperProceeds, CustomerCurrency, CurrencyOfProceeds, ProductTypeIdentifier, AppleIdentifier, ParentIdentifier FROM sales WHERE SKU = '__SKU__' AND CountryCode = '__COUNTRY__' AND BeginDate BETWEEN '" + start_date + "' AND '" + end_date + "' ORDER BY 'SKU' ASC, 'CountryCode' ASC"
+  print query1
+  print query2
+  print query3
 else:
   yesterday = date.today() - timedelta(time_delta)
   yesterday_as_string = yesterday.strftime('%Y-%m-%d')
   print yesterday_as_string
-  query = "SELECT DISTINCT SKU FROM sales WHERE BeginDate = '" + yesterday_as_string + "' AND EndDate = '" + yesterday_as_string + "' ORDER BY 'SKU' ASC";
+  query1 = "SELECT DISTINCT SKU FROM sales WHERE BeginDate = '" + yesterday_as_string + "' AND EndDate = '" + yesterday_as_string + "' ORDER BY 'SKU' ASC";
+  query2 = "SELECT DISTINCT CountryCode FROM sales WHERE SKU = '__SKU__' AND BeginDate = '" + yesterday_as_string + "' AND EndDate = '" + yesterday_as_string + "' ORDER BY 'CountryCode' ASC"
+  query3 = "SELECT Title, Version, Units, DeveloperProceeds, CustomerCurrency, CurrencyOfProceeds, ProductTypeIdentifier, AppleIdentifier, ParentIdentifier FROM sales WHERE SKU = '__SKU__' AND CountryCode = '__COUNTRY__' AND BeginDate = '" + yesterday_as_string + "' AND EndDate = '" + yesterday_as_string + "' ORDER BY 'SKU' ASC, 'CountryCode' ASC"
+  print query1
+  print query2
+  print query3
 
 #get_exchange_rates()
 
 # get skus
 cur = dbcon.cursor()
-#cur.execute("SELECT * FROM sales WHERE BeginDate = '" + yesterday_as_string + "' AND EndDate = '" + yesterday_as_string + "' ORDER BY 'SKU' ASC, 'CountryCode' ASC");
-cur.execute(query);
+#cur.execute("SELECT DISTINCT SKU FROM sales WHERE BeginDate = '" + yesterday_as_string + "' AND EndDate = '" + yesterday_as_string + "' ORDER BY 'SKU' ASC");
+cur.execute(query1);
 rows = cur.fetchall()
 if cur.rowcount == 0:
   print "Error: no data"
@@ -171,7 +181,10 @@ else:
   for sku in skus:
     # now get countries where that sku was sold
     cur = dbcon.cursor()
-    cur.execute("SELECT DISTINCT CountryCode FROM sales WHERE SKU = '" + sku + "' AND BeginDate = '" + yesterday_as_string + "' AND EndDate = '" + yesterday_as_string + "' ORDER BY 'CountryCode' ASC");
+    #cur.execute("SELECT DISTINCT CountryCode FROM sales WHERE SKU = '" + sku + "' AND BeginDate = '" + yesterday_as_string + "' AND EndDate = '" + yesterday_as_string + "' ORDER BY 'CountryCode' ASC");
+    query2prime = query2.replace("__SKU__", sku)
+    print query2prime
+    cur.execute(query2prime)
     rows = cur.fetchall()
     if cur.rowcount == 0:
       print "Error: no data"
@@ -183,7 +196,10 @@ else:
       for country in countries:
         # now get sales data for that country
         cur = dbcon.cursor()
-        cur.execute("SELECT Title, Version, Units, DeveloperProceeds, CustomerCurrency, CurrencyOfProceeds, ProductTypeIdentifier, AppleIdentifier, ParentIdentifier FROM sales WHERE SKU = '" + sku + "' AND CountryCode = '" + country + "' AND BeginDate = '" + yesterday_as_string + "' AND EndDate = '" + yesterday_as_string + "' ORDER BY 'SKU' ASC, 'CountryCode' ASC");
+        query3prime = query3.replace("__SKU__", sku).replace("__COUNTRY__", country)
+        print query3prime
+        #cur.execute("SELECT Title, Version, Units, DeveloperProceeds, CustomerCurrency, CurrencyOfProceeds, ProductTypeIdentifier, AppleIdentifier, ParentIdentifier FROM sales WHERE SKU = '" + sku + "' AND CountryCode = '" + country + "' AND BeginDate = '" + yesterday_as_string + "' AND EndDate = '" + yesterday_as_string + "' ORDER BY 'SKU' ASC, 'CountryCode' ASC");
+        cur.execute(query3prime)
         rows = cur.fetchall()
         if cur.rowcount == 0:
           print "Error: no data"
@@ -216,6 +232,7 @@ else:
               if "units" in datum:
                 units += datum["units"]
               exchange_rate = get_exchange_rate(currency_of_proceeds)
+              print "%s => USD: %f" % (currency_of_proceeds, exchange_rate)
               sales_in_dollars = (developer_proceeds * exchange_rate) * units
               if "proceeds" in datum:
                 sales_in_dollars += datum["proceeds"]
@@ -296,7 +313,10 @@ else:
       datum = sorted_sales_data[sku]
       print "Title: %s  Units sold: %s  Proceeds in USD: $%.2f" % (datum["title"], datum["units"], datum["proceeds"])
 
-    message_html += "<p><H3>Daily App Sales for " + yesterday_as_string + "</H3>"
+    if do_monthly:
+      message_html += "<p><H3>Monthly App Sales for " + month_year + "</H3>"
+    else:
+      message_html += "<p><H3>Daily App Sales for " + yesterday_as_string + "</H3>"
     message_html += "<TABLE><TR><TH style=\"background-color: #000000; color: #FFFFFF; text-align: left\">SKU</TH><TH style=\"background-color: #000000; color: #FFFFFF; text-align: left\">App Title</TH><TH style=\"background-color: #000000; color: #FFFFFF; text-align: right\">Units</TH><TH style=\"background-color: #000000; color: #FFFFFF; text-align: right\">Proceeds</TH></TR>"
     # 99FFFF blue
     # C8C8C8 gray
@@ -366,7 +386,10 @@ else:
       print "Title: %s  Units sold: %s  Proceeds in USD: $%.2f" % (datum["title"], datum["units"], datum["proceeds"])
 
     # include css here if needed
-    message_html += "<y><H3>In-App Purchases for " + yesterday_as_string + "</H3>"
+    if do_monthly:
+      message_html += "<y><H3>In-App Purchases for " + month_year + "</H3>"
+    else:
+      message_html += "<y><H3>In-App Purchases for " + yesterday_as_string + "</H3>"
     message_html += "<TABLE><TR><TH style=\"background-color: #000000; color: #FFFFFF; text-align: left\">SKU</TH><TH style=\"background-color: #000000; color: #FFFFFF; text-align: left\">Title</TH><TH style=\"background-color: #000000; color: #FFFFFF; text-align: right\">Units</TH><TH style=\"background-color: #000000; color: #FFFFFF; text-align: right\">Proceeds</TH></TR>"
     # 99FFFF blue
     # C8C8C8 gray
@@ -430,7 +453,10 @@ else:
       print "Title: %s  Units downloaded: %s" % (datum["title"], datum["units"])
 
     # include css here if needed
-    message_html += "<y><H3>App Updates for " + yesterday_as_string + "</H3>"
+    if do_monthly:
+      message_html += "<y><H3>App Updates for " + month_year + "</H3>"
+    else:
+      message_html += "<y><H3>App Updates for " + yesterday_as_string + "</H3>"
     message_html += "<TABLE><TR><TH style=\"background-color: #000000; color: #FFFFFF; text-align: left\">SKU</TH><TH style=\"background-color: #000000; color: #FFFFFF; text-align: left\">App Title</TH><TH style=\"background-color: #000000; color: #FFFFFF; text-align: right\">Units</TH></TR>"
     # 99FFFF blue
     # C8C8C8 gray
@@ -490,7 +516,10 @@ else:
 
 
     
-  message_html += "<p><h3>Today's Take: $%.2f</h3></p>" % todays_take
+  if do_monthly:
+    message_html += "<p><h3>This Month's Take: $%.2f</h3></p>" % todays_take
+  else:
+    message_html += "<p><h3>Today's Take: $%.2f</h3></p>" % todays_take
 
   if warnings:
     message_html += "<p><b>Warnings:</b><ol>"

@@ -24,9 +24,10 @@ OSXDATE="YES"
 #      /etc/init.d/mysqld restart
 REQUIRES_LOCAL_INFILE="NO"
 #
-# Set to YES to e-mail a copy of app activity.  Be sure and edit the
-# email script to set your e-mail address, etc.
+# Set to YES to e-mail a copy of app activity, daily and/or monthly.
+# Be sure and edit the email script to set your e-mail address, etc.
 EMAIL_DAILY_REPORTS="YES"
+EMAIL_MONTHLY_REPORTS="YES"
 #
 # Sometimes ITC update availability is delayed, with the result being that
 # at the time this script is run by cron, the updates for that day are not
@@ -69,6 +70,13 @@ if [ -f "$FNAME.gz" ]; then
 	echo "$(date "+%Y-%m-%d %H:%M:%S"): $DATE imported" >> "$LOGDIR/update.log"
   if [ "$EMAIL_DAILY_REPORTS" = "YES" ]; then
     python $AUTOINGESTION_LOCATION/email-reports/report.py >/dev/null
+  fi
+  if [ "$EMAIL_MONTHLY_REPORTS" = "YES" ]; then
+    # run monthly reports once on the 1st of each month
+    curdate=`date '+%d'`
+    if [ $curdate == 01 ]; then
+      python $AUTOINGESTION_LOCATION/email-reports/report.py monthly >/dev/null
+    fi
   fi
 else
 	echo "$(date "+%Y-%m-%d %H:%M:%S"): no file $FNAME.gz" >> "$LOGDIR/update.log"
