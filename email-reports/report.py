@@ -125,18 +125,28 @@ start_date = ""
 end_date = ""
 month_year = ""
 
-if len(sys.argv) == 2:
+if len(sys.argv) >= 2:
   if sys.argv[1] == "monthly":
     do_monthly = True
     # assume this is being run on the 1st of the new month
     # so we need to find the last month and calc # of days
-    today = date.today()
-    first = date(day=1, month=today.month, year=today.year)
-    lastMonthEnd = first - timedelta(days=1)
-    lastMonthStart = date(day=1, month=lastMonthEnd.month, year=lastMonthEnd.year)
-    start_date = lastMonthStart.strftime('%Y-%m-%d')
-    end_date = lastMonthEnd.strftime('%Y-%m-%d')
-    month_year = lastMonthStart.strftime('%Y-%m')
+    if len(sys.argv) > 2:
+      month = int(sys.argv[2])
+      year = int(sys.argv[3])
+      if (year < 2000):
+        year += 2000
+      monthStart = date(day=1, month=month, year=year)
+      daterange = monthrange(year, month)
+      monthEnd = date(day=daterange[1], month=month, year=year)
+    else:
+      today = date.today()
+      first = date(day=1, month=today.month, year=today.year)
+      monthEnd = first - timedelta(days=1)
+      monthStart = date(day=1, month=monthEnd.month, year=monthEnd.year)
+
+    start_date = monthStart.strftime('%Y-%m-%d')
+    end_date = monthEnd.strftime('%Y-%m-%d')
+    month_year = monthStart.strftime('%Y-%m')
     print start_date
     print end_date
     #date_range = monthrange(2011, 2)
@@ -209,6 +219,7 @@ else:
             title = item[0]
             version = item[1]
             units = item[2]
+            cur_units = item[2]
             developer_proceeds = item[3]
             customer_currency = item[4]
             currency_of_proceeds = item[5]
@@ -232,8 +243,8 @@ else:
               if "units" in datum:
                 units += datum["units"]
               exchange_rate = get_exchange_rate(currency_of_proceeds)
-              print "%s => USD: %f" % (currency_of_proceeds, exchange_rate)
-              sales_in_dollars = (developer_proceeds * exchange_rate) * units
+              sales_in_dollars = (developer_proceeds * exchange_rate) * cur_units
+              print "%s => USD: %f  %f x %f x %d = %f" % (currency_of_proceeds, exchange_rate, developer_proceeds, exchange_rate, cur_units, sales_in_dollars)
               if "proceeds" in datum:
                 sales_in_dollars += datum["proceeds"]
               datum["title"] = title
@@ -259,7 +270,8 @@ else:
               if "units" in datum:
                 units += datum["units"]
               exchange_rate = get_exchange_rate(currency_of_proceeds)
-              sales_in_dollars = (developer_proceeds * exchange_rate) * units
+              sales_in_dollars = (developer_proceeds * exchange_rate) * cur_units
+              print "%s => USD: %f  %f x %f x %d = %f" % (currency_of_proceeds, exchange_rate, developer_proceeds, exchange_rate, cur_units, sales_in_dollars)
               if "proceeds" in datum:
                 sales_in_dollars += datum["proceeds"]
               datum["title"] = title
