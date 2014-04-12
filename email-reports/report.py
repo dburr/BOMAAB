@@ -252,7 +252,7 @@ else:
                 exchange_rate = get_exchange_rate(currency_of_proceeds)
               else:
                 # free app, we don't care
-                print "not getting exchange rate since this is a free app"
+                print "not getting exchange rate for %s since this is a free app" % currency_of_proceeds
                 exchange_rate = 0
               sales_in_dollars = (developer_proceeds * exchange_rate) * cur_units
               print "%s => USD: %f  %f x %f x %d = %f" % (currency_of_proceeds, exchange_rate, developer_proceeds, exchange_rate, cur_units, sales_in_dollars)
