@@ -242,7 +242,12 @@ else:
                 datum = sales_data[sku]
               if "units" in datum:
                 units += datum["units"]
-              exchange_rate = get_exchange_rate(currency_of_proceeds)
+              if developer_proceeds > 0:
+                exchange_rate = get_exchange_rate(currency_of_proceeds)
+              else:
+                # free app, we don't care
+                print "not getting exchange rate since this is a free app"
+                exchange_rate = 0
               sales_in_dollars = (developer_proceeds * exchange_rate) * cur_units
               print "%s => USD: %f  %f x %f x %d = %f" % (currency_of_proceeds, exchange_rate, developer_proceeds, exchange_rate, cur_units, sales_in_dollars)
               if "proceeds" in datum:
@@ -269,6 +274,8 @@ else:
                 datum = iap_data[sku]
               if "units" in datum:
                 units += datum["units"]
+              # don't need to do the "is this a sale" test here since
+              # all IAPs are sales (i.e. there are no free IAPs)
               exchange_rate = get_exchange_rate(currency_of_proceeds)
               sales_in_dollars = (developer_proceeds * exchange_rate) * cur_units
               print "%s => USD: %f  %f x %f x %d = %f" % (currency_of_proceeds, exchange_rate, developer_proceeds, exchange_rate, cur_units, sales_in_dollars)
