@@ -62,7 +62,9 @@ def get_exchange_rate(country_code):
     exchange_rate = 1.0
   elif country_code in unsupported_currencies:
     print "WARNING: using predefined exchange rate of %f for %s" % (unsupported_currencies[country_code], country_code)
-    warnings.append("using predefined exchange rate of %f for %s" % (unsupported_currencies[country_code], country_code))
+    str_to_add = "using predefined exchange rate of %f for %s" % (unsupported_currencies[country_code], country_code)
+    if str_to_add not in warnings:
+      warnings.append(str_to_add)
     exchange_rate = unsupported_currencies[country_code]
   else:
     if country_code in exchange_rates:
@@ -80,11 +82,15 @@ def get_exchange_rate(country_code):
         else:
           print "FAIL"
           print "WARNING: could not get exchange rate for " + country_code + " (possibly unsupported by API), assuming 1.0"
-          warnings.append("could not get exchange rate for " + country_code + " (possibly unsupported by API), asuming 1.0")
+          str_to_add = "could not get exchange rate for " + country_code + " (possibly unsupported by API), asuming 1.0"
+          if str_to_add not in warnings:
+            warnings.append(str_to_add)
           exchange_rate = 1
       else:
           print "WARNING: could not get exchange rate for " + country_code + " (possibly unsupported by API), assuming 1.0"
-          warnings.append("could not get exchange rate for " + country_code + " (possibly unsupported by API), asuming 1.0")
+          str_to_add = "could not get exchange rate for " + country_code + " (possibly unsupported by API), asuming 1.0"
+          if str_to_add not in warnings:
+            warnings.append(str_to_add)
           exchange_rate = 1
   print "returning %f" % exchange_rate
   return exchange_rate
