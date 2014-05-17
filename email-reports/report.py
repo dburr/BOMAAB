@@ -394,7 +394,7 @@ else:
           line_color = "#99FFFF"
         #nunits = sales_by_country[country]
         message_html += "<TR style=\"background-color: %s\"><TD ALIGN=left>%s</TD>" % (line_color, the_country.name)
-        message_html += "<TD ALIGN=left>%ld</TD></TR>" % nunits
+        message_html += "<TD ALIGN=right>%ld</TD></TR>" % nunits
         line_no += 1
         total_units_sold += nunits
 
@@ -461,7 +461,7 @@ else:
           line_color = "#99FFFF"
         nunits = iaps_by_country[country]
         message_html += "<TR style=\"background-color: %s\"><TD ALIGN=left>%s</TD>" % (line_color, the_country.name)
-        message_html += "<TD ALIGN=left>%ld</TD></TR>" % nunits
+        message_html += "<TD ALIGN=right>%ld</TD></TR>" % nunits
         line_no += 1
         total_units_sold += nunits
 
@@ -528,7 +528,7 @@ else:
           line_color = "#99FFFF"
         nunits = updates_by_country[country]
         message_html += "<TR style=\"background-color: %s\"><TD ALIGN=left>%s</TD>" % (line_color, the_country.name)
-        message_html += "<TD ALIGN=left>%ld</TD></TR>" % nunits
+        message_html += "<TD ALIGN=right>%ld</TD></TR>" % nunits
         line_no += 1
         total_units_sold += nunits
 
